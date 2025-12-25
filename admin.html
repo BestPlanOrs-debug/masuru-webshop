@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuru Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --purple-dark: #2D1B3D;
+            --purple-mid: #4A2C5A;
+            --copper: #C4956A;
+            --copper-light: #D4A574;
+            --cream: #FAF8F5;
+            --cream-dark: #F0EBE3;
+            --text-dark: #1A1A1A;
+            --text-light: #6B6B6B;
+            --success: #4A7C59;
+            --danger: #C45A5A;
+            --radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--cream-dark);
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        /* Login Screen */
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--purple-dark) 0%, var(--purple-mid) 100%);
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+            margin: 20px;
+        }
+
+        .login-box h1 {
+            text-align: center;
+            color: var(--purple-dark);
+            margin-bottom: 8px;
+            font-size: 1.8rem;
+        }
+
+        .login-box p {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--cream-dark);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            margin-bottom: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .login-box input:focus {
+            outline: none;
+            border-color: var(--purple-mid);
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 14px;
+            background: var(--purple-dark);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .login-box button:hover {
+            background: var(--purple-mid);
+        }
+
+        .login-error {
+            color: var(--danger);
+            text-align: center;
+            margin-top: 12px;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        /* Admin Layout */
+        .admin-container {
+            display: none;
+        }
+
+        .admin-header {
+            background: var(--purple-dark);
+            color: white;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .admin-header h1 {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .admin-header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--copper);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--copper-light);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b04a4a;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--purple-dark);
+            color: var(--purple-dark);
+        }
+
+        .btn-outline:hover {
+            background: var(--purple-dark);
+            color: white;
+        }
+
+        .admin-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            color: var(--purple-dark);
+            margin-bottom: 4px;
+        }
+
+        .stat-card p {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        /* Products Table/Grid */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 1.3rem;
+            color: var(--purple-dark);
+        }
+
+        .products-admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .product-admin-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .product-admin-image {
+            aspect-ratio: 1;
+            overflow: hidden;
+            position: relative;
+            background: var(--cream-dark);
+        }
+
+        .product-admin-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-admin-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--copper);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .product-admin-info {
+            padding: 16px;
+        }
+
+        .product-admin-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--purple-dark);
+            margin-bottom: 4px;
+        }
+
+        .product-admin-desc {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-admin-price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--copper);
+            margin-bottom: 12px;
+        }
+
+        .product-admin-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .product-admin-actions .btn {
+            flex: 1;
+            justify-content: center;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--cream-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.2rem;
+            color: var(--purple-dark);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid var(--cream-dark);
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--purple-mid);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 6px;
+            color: var(--text-light);
+            font-size: 0.75rem;
+        }
+
+        .image-upload-area {
+            border: 2px dashed var(--cream-dark);
+            border-radius: var(--radius);
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--cream);
+        }
+
+        .image-upload-area:hover {
+            border-color: var(--purple-mid);
+            background: white;
+        }
+
+        .image-upload-area.has-image {
+            padding: 10px;
+        }
+
+        .image-upload-area img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: var(--radius);
+        }
+
+        .image-upload-area p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .image-upload-area input {
+            display: none;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--cream-dark);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* Import/Export Section */
+        .data-section {
+            margin-top: 40px;
+            padding: 24px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .data-section h3 {
+            font-size: 1.1rem;
+            color: var(--purple-dark);
+            margin-bottom: 16px;
+        }
+
+        .data-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .data-actions input[type="file"] {
+            display: none;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--success);
+            color: white;
+            padding: 16px 24px;
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+            font-weight: 500;
+            z-index: 2000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .admin-header-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .data-actions {
+                flex-direction: column;
+            }
+
+            .data-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Add Product Card */
+        .add-product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            cursor: pointer;
+            border: 2px dashed var(--cream-dark);
+            transition: all 0.2s;
+        }
+
+        .add-product-card:hover {
+            border-color: var(--copper);
+            background: var(--cream);
+        }
+
+        .add-product-card .icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        .add-product-card p {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <h1>🕯️ Masuru Admin</h1>
+            <p>Add meg a jelszót a belépéshez</p>
+            <input type="password" id="passwordInput" placeholder="Jelszó" onkeypress="if(event.key==='Enter')login()">
+            <button onclick="login()">Belépés</button>
+            <p class="login-error" id="loginError">Hibás jelszó!</p>
+        </div>
+    </div>
+
+    <!-- Admin Container -->
+    <div class="admin-container" id="adminContainer">
+        <header class="admin-header">
+            <h1>🕯️ Masuru Admin Panel</h1>
+            <div class="admin-header-actions">
+                <a href="index.html" target="_blank" class="btn btn-secondary">👁️ Webshop megtekintése</a>
+                <button class="btn btn-secondary" onclick="logout()">🚪 Kilépés</button>
+            </div>
+        </header>
+
+        <main class="admin-content">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="totalProducts">0</h3>
+                    <p>Összes termék</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="totalValue">0 Ft</h3>
+                    <p>Készletérték</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="avgPrice">0 Ft</h3>
+                    <p>Átlagár</p>
+                </div>
+            </div>
+
+            <!-- Products -->
+            <div class="section-header">
+                <h2>Termékek kezelése</h2>
+                <button class="btn btn-primary" onclick="openAddModal()">+ Új termék</button>
+            </div>
+
+            <div class="products-admin-grid" id="productsGrid">
+                <!-- Products will be inserted here -->
+            </div>
+
+            <!-- Import/Export -->
+            <div class="data-section">
+                <h3>📦 Adatok mentése / betöltése</h3>
+                <div class="data-actions">
+                    <button class="btn btn-outline" onclick="exportData()">📤 Exportálás (JSON)</button>
+                    <label class="btn btn-outline">
+                        📥 Importálás (JSON)
+                        <input type="file" id="importFile" accept=".json" onchange="importData(event)">
+                    </label>
+                    <button class="btn btn-outline" onclick="syncToWebshop()">🔄 Szinkronizálás a webshoppal</button>
+                    <button class="btn btn-danger" onclick="resetToDefault()">🗑️ Alapértelmezés visszaállítása</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">Új termék hozzáadása</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editProductId">
+                
+                <div class="form-group">
+                    <label>Termék képe</label>
+                    <div class="image-upload-area" id="imageUploadArea" onclick="document.getElementById('imageInput').click()">
+                        <p id="imageUploadText">📷 Kattints a kép feltöltéséhez</p>
+                        <img id="imagePreview" style="display: none;">
+                        <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)">
+                    </div>
+                    <small>Vagy add meg a kép URL-jét:</small>
+                    <input type="text" id="imageUrl" placeholder="https://..." style="margin-top: 8px;" oninput="handleImageUrl(this.value)">
+                </div>
+
+                <div class="form-group">
+                    <label>Termék neve *</label>
+                    <input type="text" id="productName" placeholder="pl. Karácsonyi Álom">
+                </div>
+
+                <div class="form-group">
+                    <label>Rövid leírás *</label>
+                    <textarea id="productDesc" placeholder="pl. Téli varázslat havas fenyőfákkal..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Ár (Ft) *</label>
+                    <input type="number" id="productPrice" placeholder="5900">
+                </div>
+
+                <div class="form-group">
+                    <label>Badge (opcionális)</label>
+                    <select id="productBadge">
+                        <option value="">Nincs badge</option>
+                        <option value="Új">Új</option>
+                        <option value="Kedvenc">Kedvenc</option>
+                        <option value="Akció">Akció</option>
+                        <option value="Szezonális">Szezonális</option>
+                        <option value="Különleges">Különleges</option>
+                        <option value="Prémium">Prémium</option>
+                        <option value="Limitált">Limitált</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Mégse</button>
+                <button class="btn btn-primary" onclick="saveProduct()">💾 Mentés</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        
+        // ⚠️ VÁLTOZTASD MEG EZT A JELSZÓT!
+        const ADMIN_PASSWORD = 'masuru2024';
+        
+        // LocalStorage kulcsok
+        const STORAGE_KEY = 'masuru_admin_products';
+        const AUTH_KEY = 'masuru_admin_auth';
+
+        // ============================================
+        // DEFAULT PRODUCTS
+        // ============================================
+        
+        const defaultProducts = [
+            {
+                id: 1,
+                name: "Karácsonyi Álom",
+                desc: "Téli varázslat havas fenyőfákkal és cukorpálcával. Fahéjas-narancs illat.",
+                price: 5900,
+                image: "images/IMG_5051.jpg",
+                badge: "Szezonális"
+            },
+            {
+                id: 2,
+                name: "Karácsonyfa",
+                desc: "Zöld fenyőfa gyertya hógömbökkel díszítve. Fenyő illat.",
+                price: 6400,
+                image: "images/IMG_5052.jpg",
+                badge: "Szezonális"
+            },
+            {
+                id: 3,
+                name: "Halloween Éjszaka",
+                desc: "Kísérteties koponyával és denevérrel díszítve. Sütőtök-fűszeres illat.",
+                price: 5400,
+                image: "images/IMG_5053.jpg",
+                badge: null
+            },
+            {
+                id: 4,
+                name: "Őszi Tökök",
+                desc: "Apró tökcskék, meleg őszi hangulattal. Fahéjas-vanília illat.",
+                price: 4900,
+                image: "images/IMG_5054.jpg",
+                badge: "Kedvenc"
+            },
+            {
+                id: 5,
+                name: "Őszi Harmónia",
+                desc: "Tökformájú viasz melts szett természetes fűszerekkel.",
+                price: 3900,
+                image: "images/IMG_5055.jpg",
+                badge: null
+            },
+            {
+                id: 6,
+                name: "Teknős Kert",
+                desc: "Aranyos teknősök közt pozsgások. Friss, zöld illat.",
+                price: 5900,
+                image: "images/IMG_5056.jpg",
+                badge: "Különleges"
+            },
+            {
+                id: 7,
+                name: "Zen Kert",
+                desc: "Pozsgások fém tartóban, békés meditációs hangulat. Levendula illat.",
+                price: 5400,
+                image: "images/IMG_5057.jpg",
+                badge: null
+            },
+            {
+                id: 8,
+                name: "Buddha Kert",
+                desc: "Meditáló Buddha figura arany díszítéssel és pozsgásokkal.",
+                price: 7900,
+                image: "images/IMG_5058.jpg",
+                badge: "Prémium"
+            }
+        ];
+
+        // ============================================
+        // STATE
+        // ============================================
+        
+        let products = [];
+        let currentImageData = null;
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if already logged in
+            if (sessionStorage.getItem(AUTH_KEY) === 'true') {
+                showAdmin();
+            }
+            
+            // Load products
+            loadProducts();
+        });
+
+        // ============================================
+        // AUTHENTICATION
+        // ============================================
+        
+        function login() {
+            const password = document.getElementById('passwordInput').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                sessionStorage.setItem(AUTH_KEY, 'true');
+                showAdmin();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem(AUTH_KEY);
+            location.reload();
+        }
+
+        function showAdmin() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminContainer').style.display = 'block';
+            renderProducts();
+            updateStats();
+        }
+
+        // ============================================
+        // PRODUCTS MANAGEMENT
+        // ============================================
+        
+        function loadProducts() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                products = JSON.parse(stored);
+            } else {
+                products = [...defaultProducts];
+                saveProducts();
+            }
+        }
+
+        function saveProducts() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            
+            let html = products.map(product => `
+                <div class="product-admin-card">
+                    <div class="product-admin-image">
+                        <img src="${product.image}" alt="${product.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23f0ebe3%22 width=%22200%22 height=%22200%22/><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2240%22>🕯️</text></svg>'">
+                        ${product.badge ? `<span class="product-admin-badge">${product.badge}</span>` : ''}
+                    </div>
+                    <div class="product-admin-info">
+                        <div class="product-admin-name">${product.name}</div>
+                        <div class="product-admin-desc">${product.desc}</div>
+                        <div class="product-admin-price">${formatPrice(product.price)}</div>
+                        <div class="product-admin-actions">
+                            <button class="btn btn-outline" onclick="editProduct(${product.id})">✏️ Szerkesztés</button>
+                            <button class="btn btn-danger" onclick="deleteProduct(${product.id})">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add "Add new product" card
+            html += `
+                <div class="add-product-card" onclick="openAddModal()">
+                    <div class="icon">➕</div>
+                    <p>Új termék hozzáadása</p>
+                </div>
+            `;
+
+            grid.innerHTML = html;
+        }
+
+        function updateStats() {
+            const total = products.length;
+            const totalValue = products.reduce((sum, p) => sum + p.price, 0);
+            const avg = total > 0 ? Math.round(totalValue / total) : 0;
+
+            document.getElementById('totalProducts').textContent = total;
+            document.getElementById('totalValue').textContent = formatPrice(totalValue);
+            document.getElementById('avgPrice').textContent = formatPrice(avg);
+        }
+
+        function formatPrice(price) {
+            return price.toLocaleString('hu-HU') + ' Ft';
+        }
+
+        // ============================================
+        // MODAL HANDLING
+        // ============================================
+        
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Új termék hozzáadása';
+            document.getElementById('editProductId').value = '';
+            document.getElementById('productName').value = '';
+            document.getElementById('productDesc').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productBadge').value = '';
+            document.getElementById('imageUrl').value = '';
+            resetImageUpload();
+            
+            document.getElementById('productModal').classList.add('open');
+        }
+
+        function editProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            document.getElementById('modalTitle').textContent = 'Termék szerkesztése';
+            document.getElementById('editProductId').value = id;
+            document.getElementById('productName').value = product.name;
+            document.getElementById('productDesc').value = product.desc;
+            document.getElementById('productPrice').value = product.price;
+            document.getElementById('productBadge').value = product.badge || '';
+            
+            // Set image
+            if (product.image) {
+                if (product.image.startsWith('data:')) {
+                    currentImageData = product.image;
+                    showImagePreview(product.image);
+                } else {
+                    document.getElementById('imageUrl').value = product.image;
+                    showImagePreview(product.image);
+                }
+            } else {
+                resetImageUpload();
+            }
+
+            document.getElementById('productModal').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').classList.remove('open');
+            currentImageData = null;
+        }
+
+        function saveProduct() {
+            const id = document.getElementById('editProductId').value;
+            const name = document.getElementById('productName').value.trim();
+            const desc = document.getElementById('productDesc').value.trim();
+            const price = parseInt(document.getElementById('productPrice').value);
+            const badge = document.getElementById('productBadge').value || null;
+            const imageUrl = document.getElementById('imageUrl').value.trim();
+            
+            // Validation
+            if (!name || !desc || !price) {
+                showToast('Kérlek töltsd ki a kötelező mezőket!', true);
+                return;
+            }
+
+            // Determine image source
+            let image = currentImageData || imageUrl || 'images/placeholder.jpg';
+
+            if (id) {
+                // Edit existing
+                const index = products.findIndex(p => p.id === parseInt(id));
+                if (index !== -1) {
+                    products[index] = { ...products[index], name, desc, price, badge, image };
+                }
+                showToast('Termék frissítve!');
+            } else {
+                // Add new
+                const newId = Math.max(...products.map(p => p.id), 0) + 1;
+                products.push({ id: newId, name, desc, price, badge, image });
+                showToast('Új termék hozzáadva!');
+            }
+
+            saveProducts();
+            renderProducts();
+            updateStats();
+            closeModal();
+        }
+
+        function deleteProduct(id) {
+            if (!confirm('Biztosan törlöd ezt a terméket?')) return;
+            
+            products = products.filter(p => p.id !== id);
+            saveProducts();
+            renderProducts();
+            updateStats();
+            showToast('Termék törölve!');
+        }
+
+        // ============================================
+        // IMAGE HANDLING
+        // ============================================
+        
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Check file size (max 2MB for localStorage)
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('A kép túl nagy! Maximum 2MB.', true);
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentImageData = e.target.result;
+                showImagePreview(currentImageData);
+                document.getElementById('imageUrl').value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleImageUrl(url) {
+            if (url) {
+                showImagePreview(url);
+                currentImageData = null;
+            } else {
+                resetImageUpload();
+            }
+        }
+
+        function showImagePreview(src) {
+            const preview = document.getElementById('imagePreview');
+            const text = document.getElementById('imageUploadText');
+            const area = document.getElementById('imageUploadArea');
+            
+            preview.src = src;
+            preview.style.display = 'block';
+            text.style.display = 'none';
+            area.classList.add('has-image');
+        }
+
+        function resetImageUpload() {
+            const preview = document.getElementById('imagePreview');
+            const text = document.getElementById('imageUploadText');
+            const area = document.getElementById('imageUploadArea');
+            
+            preview.src = '';
+            preview.style.display = 'none';
+            text.style.display = 'block';
+            area.classList.remove('has-image');
+            currentImageData = null;
+        }
+
+        // ============================================
+        // IMPORT / EXPORT
+        // ============================================
+        
+        function exportData() {
+            const data = {
+                exportDate: new Date().toISOString(),
+                products: products
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `masuru-products-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('Adatok exportálva!');
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.products && Array.isArray(data.products)) {
+                        products = data.products;
+                        saveProducts();
+                        renderProducts();
+                        updateStats();
+                        showToast('Adatok importálva!');
+                    } else {
+                        throw new Error('Invalid format');
+                    }
+                } catch (err) {
+                    showToast('Hibás fájlformátum!', true);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function resetToDefault() {
+            if (!confirm('Biztosan visszaállítod az alapértelmezett termékeket? Minden módosítás elvész!')) return;
+            
+            products = [...defaultProducts];
+            saveProducts();
+            renderProducts();
+            updateStats();
+            showToast('Alapértelmezés visszaállítva!');
+        }
+
+        function syncToWebshop() {
+            // Generate the products array for the webshop
+            const productCode = `const products = ${JSON.stringify(products, null, 4)};`;
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(productCode).then(() => {
+                showToast('Termékadatok vágólapra másolva! Illeszd be az index.html-be.');
+                
+                // Also show instructions
+                alert(
+                    '📋 A termékadatok a vágólapra másolva!\n\n' +
+                    'Kövesd ezeket a lépéseket:\n\n' +
+                    '1. Nyisd meg az index.html fájlt egy szerkesztőben\n' +
+                    '2. Keresd meg: "const products = ["\n' +
+                    '3. Jelöld ki az egész products tömböt (a záró ];-ig)\n' +
+                    '4. Illeszd be a vágólapról a másolt kódot\n' +
+                    '5. Mentsd el és töltsd fel újra a Netlify-ra'
+                );
+            }).catch(() => {
+                showToast('Nem sikerült a vágólapra másolni', true);
+            });
+        }
+
+        // ============================================
+        // TOAST
+        // ============================================
+        
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast' + (isError ? ' error' : '');
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Close modal on outside click
+        document.getElementById('productModal').addEventListener('click', (e) => {
+            if (e.target.id === 'productModal') {
+                closeModal();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
