@@ -76,7 +76,7 @@
         .header-inner {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 8px 20px;
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -87,18 +87,11 @@
             align-items: center;
             gap: 10px;
             text-decoration: none;
-            flex-shrink: 0;
         }
 
         .logo-icon {
             width: 36px;
             height: 36px;
-        }
-
-        .logo-img {
-            height: 50px;
-            width: auto;
-            object-fit: contain;
         }
 
         .logo-text {
@@ -107,6 +100,12 @@
             font-weight: 600;
             color: var(--purple-dark);
             letter-spacing: 2px;
+        }
+
+        .logo-img {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
         }
 
         .header-actions {
@@ -258,111 +257,21 @@
             padding: 100px 20px 60px;
         }
 
-        /* Animated Fire Effect */
-        .fire-container {
-            position: absolute;
-            bottom: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 120px;
-            height: 200px;
-            z-index: 0;
-        }
-
-        .flame {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            filter: blur(1px);
-        }
-
-        .flame-main {
-            width: 80px;
-            height: 160px;
-            background: linear-gradient(to top, #ff6b35 0%, #f7931e 30%, #ffcc00 60%, #fff5cc 100%);
-            animation: flicker 0.8s ease-in-out infinite alternate, sway 2s ease-in-out infinite;
-            box-shadow: 0 0 60px 30px rgba(255, 150, 50, 0.4),
-                        0 0 100px 60px rgba(255, 100, 50, 0.2);
-        }
-
-        .flame-inner {
-            width: 50px;
-            height: 120px;
-            background: linear-gradient(to top, #ff8c42 0%, #ffcc00 40%, #fff9e6 100%);
-            animation: flicker 0.6s ease-in-out infinite alternate-reverse, sway 1.5s ease-in-out infinite reverse;
-            bottom: 0;
-        }
-
-        .flame-core {
-            width: 25px;
-            height: 80px;
-            background: linear-gradient(to top, #ffcc00 0%, #fff5cc 50%, #ffffff 100%);
-            animation: flicker 0.4s ease-in-out infinite alternate, sway 1s ease-in-out infinite;
-            bottom: 0;
-        }
-
-        /* Flame particles */
-        .spark {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #ffcc00;
-            border-radius: 50%;
-            filter: blur(1px);
-            animation: spark-rise 2s ease-out infinite;
-        }
-
-        .spark:nth-child(4) { left: 30%; animation-delay: 0s; }
-        .spark:nth-child(5) { left: 50%; animation-delay: 0.3s; }
-        .spark:nth-child(6) { left: 70%; animation-delay: 0.6s; }
-        .spark:nth-child(7) { left: 40%; animation-delay: 0.9s; }
-        .spark:nth-child(8) { left: 60%; animation-delay: 1.2s; }
-
-        @keyframes flicker {
-            0% { transform: translateX(-50%) scaleY(1) scaleX(1); opacity: 1; }
-            25% { transform: translateX(-52%) scaleY(1.02) scaleX(0.98); }
-            50% { transform: translateX(-48%) scaleY(0.98) scaleX(1.02); opacity: 0.95; }
-            75% { transform: translateX(-51%) scaleY(1.01) scaleX(0.99); }
-            100% { transform: translateX(-50%) scaleY(0.97) scaleX(1.01); opacity: 1; }
-        }
-
-        @keyframes sway {
-            0%, 100% { transform: translateX(-50%) rotate(-2deg); }
-            50% { transform: translateX(-50%) rotate(2deg); }
-        }
-
-        @keyframes spark-rise {
-            0% { 
-                bottom: 40px; 
-                opacity: 1; 
-                transform: scale(1);
-            }
-            100% { 
-                bottom: 200px; 
-                opacity: 0; 
-                transform: scale(0.3) translateX(20px);
-            }
-        }
-
-        /* Glow effect behind fire */
         .hero::before {
             content: '';
             position: absolute;
-            bottom: 5%;
+            top: 30%;
             left: 50%;
             transform: translateX(-50%);
             width: 300px;
-            height: 300px;
-            background: radial-gradient(ellipse at center bottom, rgba(255, 150, 50, 0.3) 0%, rgba(255, 100, 50, 0.1) 40%, transparent 70%);
-            animation: glow 3s ease-in-out infinite;
-            z-index: 0;
+            height: 400px;
+            background: radial-gradient(ellipse at center bottom, rgba(255, 180, 100, 0.25) 0%, transparent 60%);
+            animation: glow 4s ease-in-out infinite;
         }
 
         @keyframes glow {
-            0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
-            50% { opacity: 1; transform: translateX(-50%) scale(1.15); }
+            0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
         }
 
         .hero-content {
@@ -630,77 +539,21 @@
         }
 
         .about-content {
-            max-width: 1000px;
+            max-width: 800px;
             margin: 0 auto;
+            text-align: center;
         }
 
-        .about-intro {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 40px;
-            align-items: center;
-            margin-bottom: 60px;
-        }
-
-        @media (min-width: 768px) {
-            .about-intro {
-                grid-template-columns: 300px 1fr;
-                gap: 60px;
-            }
-        }
-
-        .about-photo {
-            position: relative;
-        }
-
-        .about-photo img {
-            width: 100%;
-            max-width: 300px;
-            margin: 0 auto;
-            display: block;
-            border-radius: var(--radius-lg);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-        }
-
-        .about-photo::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            right: 10px;
-            bottom: 10px;
-            border: 2px solid var(--copper);
-            border-radius: var(--radius-lg);
-            z-index: -1;
-            opacity: 0.5;
-        }
-
-        .about-text h2 {
+        .about-content h2 {
             color: var(--cream);
-            margin-bottom: 10px;
-            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            margin-bottom: 30px;
         }
 
-        .about-greeting {
-            color: var(--copper-light);
-            font-size: 1.2rem;
-            font-style: italic;
-            margin-bottom: 20px;
-        }
-
-        .about-text p {
+        .about-content p {
             color: rgba(255,255,255,0.8);
-            font-size: 1rem;
-            line-height: 1.9;
-            margin-bottom: 16px;
-        }
-
-        .about-signature {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.3rem;
-            color: var(--copper-light);
-            margin-top: 24px;
-            font-style: italic;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
         }
 
         .about-features {
@@ -708,8 +561,6 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
             margin-top: 50px;
-            padding-top: 50px;
-            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
         @media (min-width: 640px) {
@@ -738,22 +589,6 @@
             font-size: 0.8rem;
             color: rgba(255,255,255,0.6);
             margin: 0;
-        }
-
-        .about-quote {
-            text-align: center;
-            margin-top: 50px;
-            padding: 40px;
-            background: rgba(255,255,255,0.05);
-            border-radius: var(--radius-lg);
-        }
-
-        .about-quote p {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.4rem;
-            color: var(--cream);
-            font-style: italic;
-            line-height: 1.6;
         }
 
         /* Contact Section */
@@ -1277,25 +1112,13 @@
         <a href="#about" onclick="closeMobileMenu()">Rólunk</a>
         <a href="#contact" onclick="closeMobileMenu()">Kapcsolat</a>
         <div class="mobile-menu-footer">
-            <p>📧 <a href="/cdn-cgi/l/email-protection#046c6168686b446965777176712a6c71"><span class="__cf_email__" data-cfemail="86eee3eaeae9c6ebe7f5f3f4f3a8eef3">[email&#160;protected]</span></a></p>
+            <p>📧 hello@masuru.hu</p>
             <p>📱 @masuru.candle</p>
         </div>
     </div>
 
     <!-- Hero -->
     <section class="hero">
-        <!-- Animated Fire -->
-        <div class="fire-container">
-            <div class="flame flame-core"></div>
-            <div class="flame flame-inner"></div>
-            <div class="flame flame-main"></div>
-            <div class="spark"></div>
-            <div class="spark"></div>
-            <div class="spark"></div>
-            <div class="spark"></div>
-            <div class="spark"></div>
-        </div>
-        
         <div class="hero-content">
             <img src="images/Masuru_logo.png" alt="Masuru" class="hero-logo">
             <span class="hero-badge">✨ Kézzel készítve, szeretettel</span>
@@ -1323,23 +1146,9 @@
     <!-- About -->
     <section class="section about-section" id="about">
         <div class="about-content">
-            <div class="about-intro">
-                <div class="about-photo">
-                    <img src="images/timi.jpg" alt="Szanyi Timi - Masuru Candle alapító">
-                </div>
-                <div class="about-text">
-                    <h2>A Masuru története</h2>
-                    <p class="about-greeting">Szia, Timi vagyok.</p>
-                    <p>A Masuru Candle mögött az a vágy áll, hogy olyan tárgyak szülessenek, amelyek nemcsak szépek, hanem érzést is hordoznak.</p>
-                    <p>Mindig is különösen közel álltak hozzám az illatok, a formák és az apró részletek. Dolgoztam cukrászként is – és bár szerettem az ízek világát, igazán a torták és sütemények megjelenése vonzott: a színek harmóniája, a díszítés finomsága, az a pillanat, amikor egy alkotás „életre kel".</p>
-                    <p>Később patikában is dolgoztam, ahol újra rátaláltam arra, amit igazán szeretek: a keverést, az alkotást, a kotyvasztás csendes, koncentrált örömét.</p>
-                    <p class="about-signature">— Szanyi Timi</p>
-                </div>
-            </div>
-
-            <div class="about-quote">
-                <p>„Ha egy Masuru gyertyát meggyújtasz, remélem, te is érzed majd azt, amit én készítés közben: a melegséget, az egyensúlyt és azt a finom, láthatatlan varázst, ami akkor születik, amikor a kéz és a lélek együtt dolgozik."</p>
-            </div>
+            <h2>A Masuru története</h2>
+            <p>A Masuru nem csak gyertyákat készít – pillanatokat teremt. Minden egyes darab kézzel készül, szeretettel és odafigyeléssel, hogy a te otthonodba is elhozza azt a meghitt, nyugodt hangulatot, amit megérdemelsz.</p>
+            <p>Szójaviaszt használunk, természetes illóolajokkal, mert hiszünk abban, hogy a szépség és a fenntarthatóság kéz a kézben jár.</p>
             
             <div class="about-features">
                 <div class="about-feature">
@@ -1358,9 +1167,9 @@
                     <p>Helyi készítés</p>
                 </div>
                 <div class="about-feature">
-                    <div class="about-feature-icon">✨</div>
-                    <h4>Spirituális</h4>
-                    <p>Lélekkel készül</p>
+                    <div class="about-feature-icon">🎁</div>
+                    <h4>Ajándék</h4>
+                    <p>Díszdobozban</p>
                 </div>
             </div>
         </div>
@@ -1374,9 +1183,9 @@
                 <p>Kérdésed van? Írj nekünk bátran!</p>
             </div>
             <div class="contact-methods">
-                <a href="/cdn-cgi/l/email-protection#e28a878e8e8da28f8391979097cc8a97" class="contact-method">
+                <a href="mailto:hello@masuru.hu" class="contact-method">
                     <span class="contact-method-icon">📧</span>
-                    <span><span class="__cf_email__" data-cfemail="6c04090000032c010d1f191e19420419">[email&#160;protected]</span></span>
+                    <span>hello@masuru.hu</span>
                 </a>
                 <a href="https://instagram.com/masuru.candle" target="_blank" class="contact-method">
                     <span class="contact-method-icon">📱</span>
@@ -1388,9 +1197,7 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="footer-logo">
-            <img src="images/Masuru_logo.png" alt="Masuru" style="height: 40px; filter: brightness(0) invert(1);">
-        </div>
+        <div class="footer-logo">MASURU</div>
         <div class="footer-links">
             <a href="#products">Gyertyák</a>
             <a href="#about">Rólunk</a>
@@ -1460,7 +1267,7 @@
     </div>
 
     <script>
-        // Default product data
+        // Default products (fallback)
         const defaultProducts = [
             {
                 id: 1,
@@ -1529,28 +1336,29 @@
         ];
 
         // Load products from localStorage (synced with admin) or use defaults
+        const STORAGE_KEY = 'masuru_admin_products';
+        let products = [];
+        
         function loadProducts() {
             try {
-                const stored = localStorage.getItem('masuru_admin_products');
+                const stored = localStorage.getItem(STORAGE_KEY);
                 if (stored) {
                     const parsed = JSON.parse(stored);
-                    // Ha üres a tömb vagy nem tömb, használjuk a defaultot
                     if (Array.isArray(parsed) && parsed.length > 0) {
-                        return parsed;
+                        products = parsed;
+                        return;
                     }
                 }
             } catch (e) {
                 console.error('Hiba a termékek betöltésekor:', e);
-                // Töröljük a hibás adatot
-                localStorage.removeItem('masuru_admin_products');
             }
-            return defaultProducts;
+            // Ha nincs localStorage adat, használjuk a defaultot és mentsük el
+            products = [...defaultProducts];
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
         }
         
-        const products = loadProducts();
-        
-        // Mindig mentsük el a termékeket (frissítés a default-tal ha szükséges)
-        localStorage.setItem('masuru_admin_products', JSON.stringify(products));
+        // Load products immediately
+        loadProducts();
 
         // Cart state
         let cart = JSON.parse(localStorage.getItem('masuru_cart')) || [];
@@ -1771,4 +1579,28 @@
             window.location.href = `mailto:hello@masuru.hu?subject=Rendelés - Masuru Candle&body=${message}`;
             
             // Option 2: When you have Stripe Payment Link, use:
-            // wind
+            // window.location.href = 'https://buy.stripe.com/YOUR_PAYMENT_LINK';
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeCart();
+                closeModal();
+                closeMobileMenu();
+            }
+        });
+    </script>
+</body>
+</html>
