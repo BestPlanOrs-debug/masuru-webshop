@@ -730,8 +730,26 @@
         <span id="toastMessage">Hozzáadva a kosárhoz!</span>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
     <script>
-        // Default products (fallback ha nincs localStorage)
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCf5v-qD-VbfePbCC2w-2V98S4Wkk09bkc",
+            authDomain: "masuru-candle.firebaseapp.com",
+            projectId: "masuru-candle",
+            storageBucket: "masuru-candle.firebasestorage.app",
+            messagingSenderId: "41674026486",
+            appId: "1:41674026486:web:b12da602888fdeed98abd7"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Default products (fallback)
         const defaultProducts = [
             {
                 id: 1,
@@ -799,29 +817,14 @@
             }
         ];
 
-        // Storage keys - SAME AS ADMIN
-        const PRODUCTS_KEY = 'masuru_admin_products';
+        // Cart storage key
         const CART_KEY = 'masuru_cart';
 
-        // Load products from localStorage (synced with admin)
-        function getProducts() {
-            try {
-                const stored = localStorage.getItem(PRODUCTS_KEY);
-                if (stored) {
-                    const parsed = JSON.parse(stored);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
-                        return parsed;
-                    }
-                }
-            } catch (e) {
-                console.error('Hiba:', e);
-            }
-            // Ha nincs vagy üres, mentjük a defaultot
-            localStorage.setItem(PRODUCTS_KEY, JSON.stringify(defaultProducts));
-            return defaultProducts;
-        }
+        // Products and cart
+        let products = [];
+        let cart = [];
 
-        // Load cart from localStorage
+        // Load cart from localStorage (cart stays local)
         function getCart() {
             try {
                 const stored = localStorage.getItem(CART_KEY);
@@ -839,13 +842,27 @@
             localStorage.setItem(CART_KEY, JSON.stringify(cart));
         }
 
-        // Products and cart
-        let products = getProducts();
-        let cart = getCart();
+        // Load products from Firebase
+        async function loadProductsFromFirebase() {
+            try {
+                const doc = await db.collection('settings').doc('products').get();
+                if (doc.exists && doc.data().items && doc.data().items.length > 0) {
+                    products = doc.data().items;
+                } else {
+                    // Ha nincs még Firebase-ben, használjuk a defaultot
+                    products = defaultProducts;
+                }
+            } catch (e) {
+                console.error('Firebase hiba:', e);
+                products = defaultProducts;
+            }
+            renderProducts();
+        }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            renderProducts();
+            cart = getCart();
+            loadProductsFromFirebase();
             updateCartUI();
         });
 
