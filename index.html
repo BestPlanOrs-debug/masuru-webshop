@@ -94,6 +94,11 @@
             height: 36px;
         }
 
+        .logo-img {
+            height: 32px;
+            width: auto;
+        }
+
         .logo-text {
             font-family: 'Cormorant Garamond', serif;
             font-size: 1.4rem;
@@ -251,21 +256,111 @@
             padding: 100px 20px 60px;
         }
 
+        /* Animated Fire Effect */
+        .fire-container {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 200px;
+            z-index: 0;
+        }
+
+        .flame {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            filter: blur(1px);
+        }
+
+        .flame-main {
+            width: 80px;
+            height: 160px;
+            background: linear-gradient(to top, #ff6b35 0%, #f7931e 30%, #ffcc00 60%, #fff5cc 100%);
+            animation: flicker 0.8s ease-in-out infinite alternate, sway 2s ease-in-out infinite;
+            box-shadow: 0 0 60px 30px rgba(255, 150, 50, 0.4),
+                        0 0 100px 60px rgba(255, 100, 50, 0.2);
+        }
+
+        .flame-inner {
+            width: 50px;
+            height: 120px;
+            background: linear-gradient(to top, #ff8c42 0%, #ffcc00 40%, #fff9e6 100%);
+            animation: flicker 0.6s ease-in-out infinite alternate-reverse, sway 1.5s ease-in-out infinite reverse;
+            bottom: 0;
+        }
+
+        .flame-core {
+            width: 25px;
+            height: 80px;
+            background: linear-gradient(to top, #ffcc00 0%, #fff5cc 50%, #ffffff 100%);
+            animation: flicker 0.4s ease-in-out infinite alternate, sway 1s ease-in-out infinite;
+            bottom: 0;
+        }
+
+        /* Flame particles */
+        .spark {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #ffcc00;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: spark-rise 2s ease-out infinite;
+        }
+
+        .spark:nth-child(4) { left: 30%; animation-delay: 0s; }
+        .spark:nth-child(5) { left: 50%; animation-delay: 0.3s; }
+        .spark:nth-child(6) { left: 70%; animation-delay: 0.6s; }
+        .spark:nth-child(7) { left: 40%; animation-delay: 0.9s; }
+        .spark:nth-child(8) { left: 60%; animation-delay: 1.2s; }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scaleY(1) scaleX(1); opacity: 1; }
+            25% { transform: translateX(-52%) scaleY(1.02) scaleX(0.98); }
+            50% { transform: translateX(-48%) scaleY(0.98) scaleX(1.02); opacity: 0.95; }
+            75% { transform: translateX(-51%) scaleY(1.01) scaleX(0.99); }
+            100% { transform: translateX(-50%) scaleY(0.97) scaleX(1.01); opacity: 1; }
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: translateX(-50%) rotate(-2deg); }
+            50% { transform: translateX(-50%) rotate(2deg); }
+        }
+
+        @keyframes spark-rise {
+            0% { 
+                bottom: 40px; 
+                opacity: 1; 
+                transform: scale(1);
+            }
+            100% { 
+                bottom: 200px; 
+                opacity: 0; 
+                transform: scale(0.3) translateX(20px);
+            }
+        }
+
+        /* Glow effect behind fire */
         .hero::before {
             content: '';
             position: absolute;
-            top: 30%;
+            bottom: 5%;
             left: 50%;
             transform: translateX(-50%);
             width: 300px;
-            height: 400px;
-            background: radial-gradient(ellipse at center bottom, rgba(255, 180, 100, 0.25) 0%, transparent 60%);
-            animation: glow 4s ease-in-out infinite;
+            height: 300px;
+            background: radial-gradient(ellipse at center bottom, rgba(255, 150, 50, 0.3) 0%, rgba(255, 100, 50, 0.1) 40%, transparent 70%);
+            animation: glow 3s ease-in-out infinite;
+            z-index: 0;
         }
 
         @keyframes glow {
-            0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
-            50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+            0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.15); }
         }
 
         .hero-content {
@@ -1144,7 +1239,7 @@
     <header class="header">
         <div class="header-inner">
             <a href="#" class="logo">
-                <span class="logo-text">MASURU</span>
+                <img src="images/Masuru_logo.svg" alt="Masuru" class="logo-img">
             </a>
             
             <nav class="nav-desktop">
@@ -1174,13 +1269,25 @@
         <a href="#about" onclick="closeMobileMenu()">Rólunk</a>
         <a href="#contact" onclick="closeMobileMenu()">Kapcsolat</a>
         <div class="mobile-menu-footer">
-            <p>📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6c04090000032c010d1f191e19420419">[email&#160;protected]</a></p>
+            <p>📧 <a href="mailto:hello@masuru.hu">hello@masuru.hu</a></p>
             <p>📱 @masuru.candle</p>
         </div>
     </div>
 
     <!-- Hero -->
     <section class="hero">
+        <!-- Animated Fire -->
+        <div class="fire-container">
+            <div class="flame flame-core"></div>
+            <div class="flame flame-inner"></div>
+            <div class="flame flame-main"></div>
+            <div class="spark"></div>
+            <div class="spark"></div>
+            <div class="spark"></div>
+            <div class="spark"></div>
+            <div class="spark"></div>
+        </div>
+        
         <div class="hero-content">
             <span class="hero-badge">✨ Kézzel készítve, szeretettel</span>
             <h1>Fény. Illat. Nyugalom.</h1>
@@ -1258,9 +1365,9 @@
                 <p>Kérdésed van? Írj nekünk bátran!</p>
             </div>
             <div class="contact-methods">
-                <a href="/cdn-cgi/l/email-protection#147c7178787b547975676166613a7c61" class="contact-method">
+                <a href="mailto:hello@masuru.hu" class="contact-method">
                     <span class="contact-method-icon">📧</span>
-                    <span><span class="__cf_email__" data-cfemail="80e8e5ececefc0ede1f3f5f2f5aee8f5">[email&#160;protected]</span></span>
+                    <span>hello@masuru.hu</span>
                 </a>
                 <a href="https://instagram.com/masuru.candle" target="_blank" class="contact-method">
                     <span class="contact-method-icon">📱</span>
@@ -1272,7 +1379,9 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="footer-logo">MASURU</div>
+        <div class="footer-logo">
+            <img src="images/Masuru_logo.svg" alt="Masuru" style="height: 28px; filter: brightness(0) invert(1);">
+        </div>
         <div class="footer-links">
             <a href="#products">Gyertyák</a>
             <a href="#about">Rólunk</a>
