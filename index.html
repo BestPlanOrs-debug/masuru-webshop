@@ -76,10 +76,11 @@
         .header-inner {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 12px 20px;
+            padding: 8px 20px;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
+            gap: 40px;
         }
 
         .logo {
@@ -87,6 +88,7 @@
             align-items: center;
             gap: 10px;
             text-decoration: none;
+            flex-shrink: 0;
         }
 
         .logo-icon {
@@ -95,8 +97,10 @@
         }
 
         .logo-img {
-            height: 160px;
+            height: 200px;
             width: auto;
+            max-width: 280px;
+            object-fit: contain;
         }
 
         .logo-text {
@@ -111,11 +115,19 @@
             display: flex;
             align-items: center;
             gap: 16px;
+            margin-left: auto;
+        }
+
+        @media (min-width: 768px) {
+            .header-actions {
+                margin-left: 0;
+            }
         }
 
         .nav-desktop {
             display: none;
             gap: 32px;
+            margin-left: auto;
         }
 
         .nav-desktop a {
@@ -1522,10 +1534,20 @@
         // Load products from localStorage (synced with admin) or use defaults
         function loadProducts() {
             const stored = localStorage.getItem('masuru_admin_products');
-            return stored ? JSON.parse(stored) : defaultProducts;
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                // Ha üres a tömb, használjuk a defaultot
+                return parsed.length > 0 ? parsed : defaultProducts;
+            }
+            return defaultProducts;
         }
         
         const products = loadProducts();
+        
+        // Also save defaults to localStorage if not exists
+        if (!localStorage.getItem('masuru_admin_products')) {
+            localStorage.setItem('masuru_admin_products', JSON.stringify(defaultProducts));
+        }
 
         // Cart state
         let cart = JSON.parse(localStorage.getItem('masuru_cart')) || [];
