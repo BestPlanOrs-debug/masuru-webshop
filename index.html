@@ -871,9 +871,6 @@
             const grid = document.getElementById('productsGrid');
             if (!grid) return;
             
-            // Reload products in case admin updated them
-            products = getProducts();
-            
             grid.innerHTML = products.map(product => `
                 <div class="product-card">
                     <div class="product-image">
