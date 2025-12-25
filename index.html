@@ -78,9 +78,8 @@
             margin: 0 auto;
             padding: 8px 20px;
             display: flex;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: center;
-            gap: 40px;
         }
 
         .logo {
@@ -97,9 +96,8 @@
         }
 
         .logo-img {
-            height: 200px;
+            height: 50px;
             width: auto;
-            max-width: 280px;
             object-fit: contain;
         }
 
@@ -115,19 +113,11 @@
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-left: auto;
-        }
-
-        @media (min-width: 768px) {
-            .header-actions {
-                margin-left: 0;
-            }
         }
 
         .nav-desktop {
             display: none;
             gap: 32px;
-            margin-left: auto;
         }
 
         .nav-desktop a {
@@ -380,6 +370,12 @@
             position: relative;
             z-index: 1;
             max-width: 600px;
+        }
+
+        .hero-logo {
+            max-width: 280px;
+            height: auto;
+            margin-bottom: 30px;
         }
 
         .hero-badge {
@@ -1251,7 +1247,7 @@
     <header class="header">
         <div class="header-inner">
             <a href="#" class="logo">
-                <img src="images/Masuru_logo.svg" alt="Masuru" class="logo-img">
+                <img src="images/Masuru_logo.png" alt="Masuru" class="logo-img">
             </a>
             
             <nav class="nav-desktop">
@@ -1301,6 +1297,7 @@
         </div>
         
         <div class="hero-content">
+            <img src="images/Masuru_logo.png" alt="Masuru" class="hero-logo">
             <span class="hero-badge">✨ Kézzel készítve, szeretettel</span>
             <h1>Fény. Illat. Nyugalom.</h1>
             <p>Egyedi, kézzel öntött gyertyák, amelyek otthonossá és különlegessé varázsolják a mindennapokat.</p>
@@ -1392,7 +1389,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-logo">
-            <img src="images/Masuru_logo.svg" alt="Masuru" style="height: 28px; filter: brightness(0) invert(1);">
+            <img src="images/Masuru_logo.png" alt="Masuru" style="height: 40px; filter: brightness(0) invert(1);">
         </div>
         <div class="footer-links">
             <a href="#products">Gyertyák</a>
@@ -1533,21 +1530,27 @@
 
         // Load products from localStorage (synced with admin) or use defaults
         function loadProducts() {
-            const stored = localStorage.getItem('masuru_admin_products');
-            if (stored) {
-                const parsed = JSON.parse(stored);
-                // Ha üres a tömb, használjuk a defaultot
-                return parsed.length > 0 ? parsed : defaultProducts;
+            try {
+                const stored = localStorage.getItem('masuru_admin_products');
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    // Ha üres a tömb vagy nem tömb, használjuk a defaultot
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        return parsed;
+                    }
+                }
+            } catch (e) {
+                console.error('Hiba a termékek betöltésekor:', e);
+                // Töröljük a hibás adatot
+                localStorage.removeItem('masuru_admin_products');
             }
             return defaultProducts;
         }
         
         const products = loadProducts();
         
-        // Also save defaults to localStorage if not exists
-        if (!localStorage.getItem('masuru_admin_products')) {
-            localStorage.setItem('masuru_admin_products', JSON.stringify(defaultProducts));
-        }
+        // Mindig mentsük el a termékeket (frissítés a default-tal ha szükséges)
+        localStorage.setItem('masuru_admin_products', JSON.stringify(products));
 
         // Cart state
         let cart = JSON.parse(localStorage.getItem('masuru_cart')) || [];
@@ -1572,24 +1575,11 @@
 
         // Render products
         function renderProducts() {
-            // Always load fresh products from localStorage
-            const currentProducts = loadProducts();
             const grid = document.getElementById('productsGrid');
-            
-            if (!grid) {
-                console.error('productsGrid element not found');
-                return;
-            }
-            
-            if (!currentProducts || currentProducts.length === 0) {
-                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-light);">Nincsenek elérhető termékek.</div>';
-                return;
-            }
-            
-            grid.innerHTML = currentProducts.map(product => `
+            grid.innerHTML = products.map(product => `
                 <div class="product-card" onclick="openProductModal(${product.id})">
                     <div class="product-image">
-                        <img src="${product.image}" alt="${product.name}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23f0ebe3%22 width=%22200%22 height=%22200%22/><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2240%22>🕯️</text></svg>'">
+                        <img src="${product.image}" alt="${product.name}" loading="lazy">
                         ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
                     </div>
                     <div class="product-info">
@@ -1611,13 +1601,7 @@
 
         // Add to cart
         function addToCart(productId, qty = 1) {
-            const currentProducts = loadProducts();
-            const product = currentProducts.find(p => p.id === productId);
-            if (!product) {
-                showToast('Termék nem található!');
-                return;
-            }
-            
+            const product = products.find(p => p.id === productId);
             const existingItem = cart.find(item => item.id === productId);
             
             if (existingItem) {
@@ -1729,13 +1713,7 @@
 
         // Product modal
         function openProductModal(productId) {
-            const currentProducts = loadProducts();
-            selectedProduct = currentProducts.find(p => p.id === productId);
-            if (!selectedProduct) {
-                showToast('Termék nem található!');
-                return;
-            }
-            
+            selectedProduct = products.find(p => p.id === productId);
             modalQty = 1;
             
             document.getElementById('modalImage').src = selectedProduct.image;
@@ -1765,19 +1743,6 @@
             }
         }
 
-        // Show toast notification
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toastMessage');
-            if (toast && toastMessage) {
-                toastMessage.textContent = message;
-                toast.classList.add('show');
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 3000);
-            }
-        }
-
         // Close modal on overlay click
         document.getElementById('productModal').addEventListener('click', (e) => {
             if (e.target.id === 'productModal') {
@@ -1787,11 +1752,6 @@
 
         // Checkout
         function checkout() {
-            if (cart.length === 0) {
-                showToast('A kosár üres!');
-                return;
-            }
-            
             // Generate order summary
             const orderSummary = cart.map(item => 
                 `${item.name} x${item.qty}`
@@ -1811,5 +1771,4 @@
             window.location.href = `mailto:hello@masuru.hu?subject=Rendelés - Masuru Candle&body=${message}`;
             
             // Option 2: When you have Stripe Payment Link, use:
-            // window.location.href = 'YOUR_STRIPE_PAYMENT_LINK_URL';
-        }
+            // wind
