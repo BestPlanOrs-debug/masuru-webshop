@@ -229,7 +229,7 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 40px;
-            align-items: center;
+            align-items: start;
         }
 
         @media (min-width: 768px) {
@@ -243,10 +243,10 @@
         }
 
         .about-photo img {
-            width: 250px;
-            height: 250px;
+            width: 280px;
+            height: auto;
             object-fit: cover;
-            border-radius: 50%;
+            border-radius: 20px;
             border: 4px solid var(--copper);
         }
 
@@ -398,7 +398,7 @@
         }
 
         .footer img {
-            height: 40px;
+            height: 80px;
             margin-bottom: 20px;
             filter: brightness(0) invert(1);
         }
@@ -663,8 +663,12 @@
                 <h2>A Masuru története</h2>
                 <p class="intro">Szia, Timi vagyok.</p>
                 <p>A Masuru Candle mögött az a vágy áll, hogy olyan tárgyak szülessenek, amelyek nemcsak szépek, hanem érzést is hordoznak.</p>
-                <p>Mindig is különösen közel álltak hozzám az illatok, a formák és az apró részletek. Amikor először öntöttem gyertyát, azonnal éreztem: ez az, amit csinálni szeretnék.</p>
-                <p>Minden egyes Masuru gyertya kézzel készül, szójaviaszból, természetes illóolajokkal – mert hiszek abban, hogy a szépség és a fenntarthatóság kéz a kézben jár.</p>
+                <p>Mindig is különösen közel álltak hozzám az illatok, a formák és az apró részletek. Dolgoztam cukrászként is – és bár szerettem az ízek világát, igazán a torták és sütemények megjelenése vonzott: a színek harmóniája, a díszítés finomsága, az a pillanat, amikor egy alkotás „életre kel".</p>
+                <p>Később patikában is dolgoztam, ahol újra rátaláltam arra, amit igazán szeretek: a keverést, az alkotást, a kotyvasztás csendes, koncentrált örömét. Ott is mindig az a rész érdekelt leginkább, ahol az összetevőkből valami új születik.</p>
+                <p>A spiritualitás régóta része az életemnek – nem hangosan, nem látványosan, inkább belül. Talán ezért is hívnak többen mosolyogva „boszinak". Szeretem ezt a szót, mert számomra az intuíciót, az érzékenységet és az odafigyelést jelenti.</p>
+                <p>A Masuru gyertyák kézzel készülnek, nyugalomban, figyelemmel. Minden darab egy kis belső tűz: egy pillanat csend, egy lélegzetnyi fény, egy illat, ami emlékeztet arra, hogy jó megállni.</p>
+                <p>Ha egy Masuru gyertyát meggyújtasz, remélem, te is érzed majd azt, amit én készítés közben: a melegséget, az egyensúlyt és azt a finom, láthatatlan varázst, ami akkor születik, amikor a kéz és a lélek együtt dolgozik.</p>
+                <p class="intro" style="margin-top: 24px;">— Szanyi Timi</p>
             </div>
         </div>
     </section>
@@ -727,8 +731,8 @@
     </div>
 
     <script>
-        // Products - simple array, no localStorage
-        const products = [
+        // Default products (fallback ha nincs localStorage)
+        const defaultProducts = [
             {
                 id: 1,
                 name: "Karácsonyi Álom",
@@ -795,21 +799,68 @@
             }
         ];
 
-        // Cart
-        let cart = [];
+        // Storage keys - SAME AS ADMIN
+        const PRODUCTS_KEY = 'masuru_admin_products';
+        const CART_KEY = 'masuru_cart';
+
+        // Load products from localStorage (synced with admin)
+        function getProducts() {
+            try {
+                const stored = localStorage.getItem(PRODUCTS_KEY);
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        return parsed;
+                    }
+                }
+            } catch (e) {
+                console.error('Hiba:', e);
+            }
+            // Ha nincs vagy üres, mentjük a defaultot
+            localStorage.setItem(PRODUCTS_KEY, JSON.stringify(defaultProducts));
+            return defaultProducts;
+        }
+
+        // Load cart from localStorage
+        function getCart() {
+            try {
+                const stored = localStorage.getItem(CART_KEY);
+                if (stored) {
+                    return JSON.parse(stored);
+                }
+            } catch (e) {
+                console.error('Kosár hiba:', e);
+            }
+            return [];
+        }
+
+        // Save cart to localStorage
+        function saveCart() {
+            localStorage.setItem(CART_KEY, JSON.stringify(cart));
+        }
+
+        // Products and cart
+        let products = getProducts();
+        let cart = getCart();
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             renderProducts();
+            updateCartUI();
         });
 
         // Render products
         function renderProducts() {
             const grid = document.getElementById('productsGrid');
+            if (!grid) return;
+            
+            // Reload products in case admin updated them
+            products = getProducts();
+            
             grid.innerHTML = products.map(product => `
                 <div class="product-card">
                     <div class="product-image">
-                        <img src="${product.image}" alt="${product.name}">
+                        <img src="${product.image}" alt="${product.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23f0ebe3%22 width=%22200%22 height=%22200%22/><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2240%22>🕯️</text></svg>'">
                         ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
                     </div>
                     <div class="product-info">
@@ -900,6 +951,9 @@
                 cartFooter.style.display = 'block';
                 cartTotal.textContent = formatPrice(totalPrice);
             }
+            
+            // Save cart to localStorage
+            saveCart();
         }
 
         // Open/close cart
