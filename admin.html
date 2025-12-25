@@ -423,6 +423,12 @@
             background: white;
         }
 
+        .image-upload-area.dragover {
+            border-color: var(--copper);
+            background: rgba(196, 149, 106, 0.1);
+            border-style: solid;
+        }
+
         .image-upload-area.has-image {
             padding: 10px;
         }
@@ -644,7 +650,7 @@
                 <div class="form-group">
                     <label>Termék képe</label>
                     <div class="image-upload-area" id="imageUploadArea" onclick="document.getElementById('imageInput').click()">
-                        <p id="imageUploadText">📷 Kattints a kép feltöltéséhez</p>
+                        <p id="imageUploadText">📷 Húzd ide a képet vagy kattints a tallózáshoz</p>
                         <img id="imagePreview" style="display: none;">
                         <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)">
                     </div>
@@ -861,14 +867,24 @@
 
         async function saveProducts() {
             try {
+                // Clean products for Firebase - remove invalid data
+                const cleanProducts = products.map(p => ({
+                    id: p.id,
+                    name: p.name || '',
+                    desc: p.desc || '',
+                    price: p.price || 0,
+                    image: (p.image && p.image.length < 500000) ? p.image : 'images/placeholder.jpg',
+                    badge: p.badge || ''
+                }));
+                
                 await db.collection('settings').doc('products').set({
-                    items: products,
+                    items: cleanProducts,
                     updatedAt: new Date().toISOString()
                 });
                 console.log('Termékek mentve Firebase-be!');
             } catch (e) {
                 console.error('Mentési hiba:', e);
-                alert('Hiba történt a mentés során!');
+                alert('Hiba történt a mentés során! Ha nagy képet töltöttél fel, használj kisebbet vagy URL-t.');
             }
         }
 
@@ -1068,6 +1084,54 @@
             area.classList.remove('has-image');
             currentImageData = null;
         }
+
+        // Drag & Drop setup - run on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const area = document.getElementById('imageUploadArea');
+            if (!area) return;
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                area.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                area.addEventListener(eventName, () => {
+                    area.classList.add('dragover');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                area.addEventListener(eventName, () => {
+                    area.classList.remove('dragover');
+                });
+            });
+
+            area.addEventListener('drop', (e) => {
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    if (file.type.startsWith('image/')) {
+                        // Check file size
+                        if (file.size > 2 * 1024 * 1024) {
+                            showToast('A kép túl nagy! Maximum 2MB.', true);
+                            return;
+                        }
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                            currentImageData = ev.target.result;
+                            showImagePreview(currentImageData);
+                            document.getElementById('imageUrl').value = '';
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        showToast('Csak képfájl tölthető fel!', true);
+                    }
+                }
+            });
+        });
 
         // ============================================
         // IMPORT / EXPORT
